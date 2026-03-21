@@ -42,11 +42,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextField(controller: _usernameCtrl, decoration: const InputDecoration(labelText: 'Username (5–20 chars)')),
+              TextField(controller: _usernameCtrl, decoration: const InputDecoration(labelText: 'Username', hintText: '5–20 characters')),
               const SizedBox(height: 16),
-              TextField(controller: _emailCtrl, decoration: const InputDecoration(labelText: 'Email'), keyboardType: TextInputType.emailAddress),
+              TextField(controller: _emailCtrl, decoration: const InputDecoration(labelText: 'Email', hintText: 'your@email.com'), keyboardType: TextInputType.emailAddress),
               const SizedBox(height: 16),
-              TextField(controller: _passwordCtrl, decoration: const InputDecoration(labelText: 'Password (min 7, upper+lower+digit)'), obscureText: true),
+              TextField(controller: _passwordCtrl, decoration: const InputDecoration(labelText: 'Password', hintText: 'Min 7 chars, upper + lower + number'), obscureText: true),
               if (_error != null) ...[
                 const SizedBox(height: 12),
                 Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),

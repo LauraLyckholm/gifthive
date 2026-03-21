@@ -74,13 +74,38 @@ class ApiService {
     if (res.statusCode != 200) throw Exception('Failed to delete hive');
   }
 
+  Future<void> updateUser(String token, String userId, Map<String, dynamic> fields) async {
+    final res = await http.put(
+      Uri.parse('$baseUrl/user-routes/users/$userId'),
+      headers: _authHeaders(token),
+      body: jsonEncode(fields),
+    );
+    if (res.statusCode != 200) {
+      final body = jsonDecode(res.body);
+      throw Exception(body['error'] ?? 'Failed to update account');
+    }
+  }
+
+  Future<List<Hive>> getSharedHives(String token, String userId) async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/gift-routes/hives/shared-with/$userId'),
+      headers: {'Auth': token},
+    );
+    if (res.statusCode != 200) throw Exception('Failed to load shared hives');
+    final body = jsonDecode(res.body);
+    final List data = body['hives'] ?? [];
+    return data.map((h) => Hive.fromJson(h)).toList();
+  }
+
   // ---------- GIFTS ----------
 
-  Future<Gift> addGift(String token, String hiveId, String giftName, List<String> tags) async {
+  Future<Gift> addGift(String token, String hiveId, String giftName, List<String> tags, {DateTime? dueDate}) async {
+    final body = <String, dynamic>{'gift': giftName, 'tags': tags, 'hiveId': hiveId};
+    if (dueDate != null) body['dueDate'] = dueDate.toIso8601String();
     final res = await http.post(
       Uri.parse('$baseUrl/gift-routes/gifts'),
       headers: _authHeaders(token),
-      body: jsonEncode({'gift': giftName, 'tags': tags, 'hiveId': hiveId}),
+      body: jsonEncode(body),
     );
     if (res.statusCode != 200 && res.statusCode != 201) {
       throw Exception('Failed to add gift');

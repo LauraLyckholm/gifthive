@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/hive_provider.dart';
 import 'screens/login_screen.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_shell.dart';
 
 void main() {
   runApp(
@@ -42,7 +42,7 @@ class _GiftHiveAppState extends State<GiftHiveApp> {
         useMaterial3: true,
       ),
       home: context.watch<AuthProvider>().isLoggedIn
-          ? const HomeScreen()
+          ? const MainShell()
           : const LoginScreen(),
     );
   }
