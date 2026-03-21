@@ -49,6 +49,14 @@ class AuthProvider extends ChangeNotifier {
     await _api.updateUser(token, _user!.id, {'password': newPassword});
   }
 
+  Future<void> deleteAccount() async {
+    await _api.deleteUser(token, _user!.id);
+    _user = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    notifyListeners();
+  }
+
   Future<void> logout() async {
     _user = null;
     final prefs = await SharedPreferences.getInstance();

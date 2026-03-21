@@ -4,6 +4,7 @@ import '../models/gift.dart';
 import '../models/hive.dart';
 import '../providers/auth_provider.dart';
 import '../providers/hive_provider.dart';
+import '../widgets/gradient_button.dart';
 
 class HiveDetailScreen extends StatelessWidget {
   final Hive hive;
@@ -295,7 +296,7 @@ class HiveDetailScreen extends StatelessWidget {
                         actions: [
                           TextButton(onPressed: () => Navigator.pop(dlg, false), child: const Text('Cancel')),
                           FilledButton(
-                            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                            style: FilledButton.styleFrom(backgroundColor: const Color(0xFFC44B3A)),
                             onPressed: () => Navigator.pop(dlg, true),
                             child: const Text('Delete'),
                           ),
@@ -304,51 +305,86 @@ class HiveDetailScreen extends StatelessWidget {
                     );
                   },
                   onDismissed: (_) => hiveProvider.deleteGift(token, hive.id, gift.id),
-                  child: Card(
-                    child: ListTile(
-                      leading: Checkbox(
-                        value: gift.bought,
-                        onChanged: (_) => hiveProvider.toggleBought(token, hive.id, gift),
-                      ),
-                      title: Text(
-                        gift.gift,
-                        style: gift.bought
-                            ? const TextStyle(decoration: TextDecoration.lineThrough)
-                            : null,
-                      ),
-                      subtitle: _buildGiftSubtitle(gift),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit_outlined),
-                            onPressed: () => _showEditGiftDialog(ctx, gift),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete_outline),
-                            onPressed: () async {
-                              final confirm = await showDialog<bool>(
-                                context: ctx,
-                                builder: (dlg) => AlertDialog(
-                                  title: const Text('Delete gift?'),
-                                  content: Text('Remove "${gift.gift}" from this hive?'),
-                                  actions: [
-                                    TextButton(onPressed: () => Navigator.pop(dlg, false), child: const Text('Cancel')),
-                                    FilledButton(
-                                      style: FilledButton.styleFrom(backgroundColor: Colors.red),
-                                      onPressed: () => Navigator.pop(dlg, true),
-                                      child: const Text('Delete'),
-                                    ),
-                                  ],
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: gift.bought ? null : Colors.white,
+                      gradient: gift.bought
+                          ? const LinearGradient(
+                              begin: Alignment(-0.5, 0.87),
+                              end: Alignment(0.5, -0.87),
+                              colors: [Color(0xFFFFAF3A), Color(0xFFFFC440)],
+                            )
+                          : null,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.06),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: gift.bought,
+                          onChanged: (_) => hiveProvider.toggleBought(token, hive.id, gift),
+                          activeColor: const Color(0xFF331616),
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                gift.gift,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF331616),
+                                  decoration: gift.bought ? TextDecoration.lineThrough : null,
+                                  decorationColor: const Color(0xFF331616),
                                 ),
-                              );
-                              if (confirm == true) {
-                                hiveProvider.deleteGift(token, hive.id, gift.id);
-                              }
-                            },
+                              ),
+                              if (_buildGiftSubtitle(gift) != null) ...[
+                                const SizedBox(height: 2),
+                                DefaultTextStyle(
+                                  style: TextStyle(fontSize: 13, color: const Color(0xFF331616).withValues(alpha: 0.6)),
+                                  child: _buildGiftSubtitle(gift)!,
+                                ),
+                              ],
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.edit_outlined, color: Color(0xFF331616)),
+                          onPressed: () => _showEditGiftDialog(ctx, gift),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline, color: Color(0xFF331616)),
+                          onPressed: () async {
+                            final confirm = await showDialog<bool>(
+                              context: ctx,
+                              builder: (dlg) => AlertDialog(
+                                title: const Text('Delete gift?'),
+                                content: Text('Remove "${gift.gift}" from this hive?'),
+                                actions: [
+                                  TextButton(onPressed: () => Navigator.pop(dlg, false), child: const Text('Cancel')),
+                                  FilledButton(
+                                    style: FilledButton.styleFrom(backgroundColor: const Color(0xFFC44B3A)),
+                                    onPressed: () => Navigator.pop(dlg, true),
+                                    child: const Text('Delete'),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirm == true) {
+                              hiveProvider.deleteGift(token, hive.id, gift.id);
+                            }
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -385,14 +421,9 @@ class HiveDetailScreen extends StatelessWidget {
                 SizedBox(
                   width: 52,
                   height: 52,
-                  child: FilledButton.tonal(
-                    style: FilledButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size.zero,
-                      backgroundColor: const Color(0xFFFFC440),
-                      foregroundColor: const Color(0xFF331616),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
+                  child: GradientButton(
+                    borderRadius: BorderRadius.circular(12),
+                    padding: EdgeInsets.zero,
                     onPressed: () => _showAddGiftDialog(context),
                     child: const Icon(Icons.add),
                   ),

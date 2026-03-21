@@ -84,6 +84,14 @@ class ApiService {
     if (res.statusCode != 200) throw Exception('Failed to delete hive');
   }
 
+  Future<void> deleteUser(String token, String userId) async {
+    final res = await http.delete(
+      Uri.parse('$baseUrl/user-routes/users/$userId'),
+      headers: {'Auth': token},
+    );
+    if (res.statusCode != 200) throw Exception('Failed to delete account');
+  }
+
   Future<void> updateUser(String token, String userId, Map<String, dynamic> fields) async {
     final res = await http.put(
       Uri.parse('$baseUrl/user-routes/users/$userId'),

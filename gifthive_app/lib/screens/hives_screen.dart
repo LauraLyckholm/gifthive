@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/hive_provider.dart';
+import '../widgets/gradient_button.dart';
 import 'hive_detail_screen.dart';
 
 class HivesScreen extends StatefulWidget {
@@ -130,7 +131,7 @@ class _HivesScreenState extends State<HivesScreen> {
                                 actions: [
                                   TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
                                   FilledButton(
-                                    style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                                    style: FilledButton.styleFrom(backgroundColor: const Color(0xFFC44B3A), foregroundColor: Colors.white),
                                     onPressed: () => Navigator.pop(ctx, true),
                                     child: const Text('Delete'),
                                   ),
@@ -139,46 +140,70 @@ class _HivesScreenState extends State<HivesScreen> {
                             );
                           },
                           onDismissed: (_) => hiveProvider.deleteHive(auth.token, hive.id),
-                          child: Card(
-                            child: ListTile(
-                              leading: const Icon(Icons.hive),
-                              title: Text(hive.name),
-                              subtitle: Text('${hive.gifts.length} gift(s)'),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit_outlined),
-                                    onPressed: () => _showRenameHiveDialog(hive.id, hive.name),
+                          child: GestureDetector(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => HiveDetailScreen(hive: hive)),
+                            ),
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.06),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
                                   ),
-                                  IconButton(
-                                icon: const Icon(Icons.delete_outline),
-                                onPressed: () async {
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      title: const Text('Delete hive?'),
-                                      content: Text('This will permanently delete "${hive.name}" and all its gifts.'),
-                                      actions: [
-                                        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-                                        FilledButton(
-                                          style: FilledButton.styleFrom(backgroundColor: Colors.red),
-                                          onPressed: () => Navigator.pop(ctx, true),
-                                          child: const Text('Delete'),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.hive, color: Color(0xFF331616), size: 28),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(hive.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFF331616))),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          '${hive.gifts.length} ${hive.gifts.length == 1 ? 'gift' : 'gifts'}',
+                                          style: TextStyle(fontSize: 13, color: const Color(0xFF331616).withValues(alpha: 0.6)),
                                         ),
                                       ],
                                     ),
-                                  );
-                                  if (confirm == true) {
-                                    await hiveProvider.deleteHive(auth.token, hive.id);
-                                  }
-                                },
-                              ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.edit_outlined, color: Color(0xFF331616)),
+                                    onPressed: () => _showRenameHiveDialog(hive.id, hive.name),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete_outline, color: Color(0xFF331616)),
+                                    onPressed: () async {
+                                      final confirm = await showDialog<bool>(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          title: const Text('Delete hive?'),
+                                          content: Text('This will permanently delete "${hive.name}" and all its gifts.'),
+                                          actions: [
+                                            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                                            FilledButton(
+                                              style: FilledButton.styleFrom(backgroundColor: const Color(0xFFC44B3A)),
+                                              onPressed: () => Navigator.pop(ctx, true),
+                                              child: const Text('Delete'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                      if (confirm == true) {
+                                        await hiveProvider.deleteHive(auth.token, hive.id);
+                                      }
+                                    },
+                                  ),
                                 ],
-                              ),
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_) => HiveDetailScreen(hive: hive)),
                               ),
                             ),
                           ),
@@ -216,14 +241,9 @@ class _HivesScreenState extends State<HivesScreen> {
                 SizedBox(
                   width: 52,
                   height: 52,
-                  child: FilledButton.tonal(
-                    style: FilledButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size.zero,
-                      backgroundColor: const Color(0xFFFFC440),
-                      foregroundColor: const Color(0xFF331616),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
+                  child: GradientButton(
+                    borderRadius: BorderRadius.circular(12),
+                    padding: EdgeInsets.zero,
                     onPressed: _showAddHiveDialog,
                     child: const Icon(Icons.add),
                   ),

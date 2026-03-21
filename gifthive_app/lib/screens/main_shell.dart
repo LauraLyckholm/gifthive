@@ -102,8 +102,8 @@ class _MainShellState extends State<MainShell> {
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
                             color: active
-                                ? const Color(0xFFFFE4A0)
-                                : const Color(0x00FFE4A0),
+                                ? const Color(0x91FFC440)
+                                : const Color(0x00FFC440),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Column(
@@ -111,7 +111,7 @@ class _MainShellState extends State<MainShell> {
                             children: [
                               Icon(
                                 active ? tab.activeIcon : tab.icon,
-                                color: active ? scheme.primary : scheme.onSurfaceVariant,
+                                color: active ? const Color(0xFF331616) : scheme.onSurfaceVariant,
                                 size: 24,
                               ),
                               const SizedBox(height: 2),
@@ -120,7 +120,7 @@ class _MainShellState extends State<MainShell> {
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: active ? FontWeight.w600 : FontWeight.normal,
-                                  color: active ? scheme.primary : scheme.onSurfaceVariant,
+                                  color: active ? const Color(0xFF331616) : scheme.onSurfaceVariant,
                                 ),
                               ),
                             ],

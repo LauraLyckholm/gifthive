@@ -5,6 +5,8 @@ import '../providers/auth_provider.dart';
 import '../providers/hive_provider.dart';
 import 'hives_screen.dart';
 import 'shared_hives_screen.dart';
+import '../widgets/gradient_button.dart';
+import '../widgets/stat_card.dart';
 
 class HomeScreen extends StatefulWidget {
   final void Function(int index)? onSwitchTab;
@@ -255,7 +257,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     final hiveProvider = context.watch<HiveProvider>();
-    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(title: const Text('GiftHive')),
@@ -324,19 +325,19 @@ class _HomeScreenState extends State<HomeScreen> {
                               Navigator.push(context, MaterialPageRoute(builder: (_) => const HivesScreen()));
                             }
                           },
-                          child: _StatCard(
+                          child: StatCard(
                             icon: Icons.hive,
                             label: hiveProvider.hives.length == 1 ? 'Hive' : 'Hives',
                             value: '${hiveProvider.hives.length}',
                             clickable: true,
                           ),
                         ),
-                        _StatCard(
+                        StatCard(
                           icon: Icons.card_giftcard,
                           label: hiveProvider.totalGifts == 1 ? 'Gift' : 'Gifts',
                           value: '${hiveProvider.totalGifts}',
                         ),
-                        _StatCard(
+                        StatCard(
                           icon: Icons.alarm,
                           label: hiveProvider.overdueGifts == 1 ? 'Gift overdue' : 'Gifts overdue',
                           value: '${hiveProvider.overdueGifts}',
@@ -346,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             MaterialPageRoute(builder: (_) => const SharedHivesScreen()),
                           ),
-                          child: _StatCard(
+                          child: StatCard(
                             icon: Icons.people_outline,
                             label: 'Shared with me',
                             value: '${hiveProvider.sharedHives.length}',
@@ -362,17 +363,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                             height: 52,
                             width: 52,
-                            child: FilledButton.tonal(
-                              style: FilledButton.styleFrom(                                           
-                                padding: EdgeInsets.zero,
-                                minimumSize: Size.zero,
-                                backgroundColor: const Color(0xFFFFC440),
-                                foregroundColor: const Color(0xFF331616),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              ),                                                                       
+                            child: GradientButton(
+                              borderRadius: BorderRadius.circular(12),
+                              padding: EdgeInsets.zero,
                               onPressed: () => _showActionSheet(context),
-                              child: const Icon(Icons.add),                                            
-                            ), 
+                              child: const Icon(Icons.add),
+                            ),
                           )
                       ]
                     ),
@@ -384,56 +380,3 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final bool clickable;
-
-  const _StatCard({
-    required this.icon,
-    required this.label,
-    required this.value,
-    this.clickable = false,
-  });
-
-  static const _textColor = Color(0xFF331616);
-  static const _gradient = LinearGradient(
-    begin: Alignment(-0.5, 0.87),
-    end: Alignment(0.5, -0.87),
-    colors: [Color(0xFFFFAF3A), Color(0xFFFFC440)],
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: clickable ? null : Colors.white,
-        gradient: clickable ? _gradient : null,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Icon(icon, color: _textColor, size: 28),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(value, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: _textColor)),
-              Text(label, style: TextStyle(fontSize: 13, color: _textColor.withValues(alpha: 0.7))),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/gradient_button.dart';
+import '../widgets/info_tile.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -94,8 +96,8 @@ class _AccountScreenState extends State<AccountScreen> {
             // Info section
             Text('Personal information', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
-            _InfoTile(label: 'Username', value: user?.username ?? ''),
-            _InfoTile(
+            InfoTile(label: 'Username', value: user?.username ?? ''),
+            InfoTile(
               label: 'Email',
               value: user?.email ?? '',
               trailing: const Tooltip(
@@ -120,17 +122,12 @@ class _AccountScreenState extends State<AccountScreen> {
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                  padding: EdgeInsets.all(10),
-                  minimumSize: Size.zero,
-                  backgroundColor: const Color(0xFFFFC440),
-                  foregroundColor: const Color(0xFF331616),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                 ),
+              child: GradientButton(
+                borderRadius: BorderRadius.circular(20),
+                padding: const EdgeInsets.all(14),
                 onPressed: _savingUsername ? null : _updateUsername,
                 child: _savingUsername
-                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white70))
                     : const Text('Update username'),
               ),
             ),
@@ -161,17 +158,12 @@ class _AccountScreenState extends State<AccountScreen> {
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                  padding: EdgeInsets.all(10),
-                  minimumSize: Size.zero,
-                  backgroundColor: const Color(0xFFFFC440),
-                  foregroundColor: const Color(0xFF331616),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                 ),
+              child: GradientButton(
+                borderRadius: BorderRadius.circular(20),
+                padding: const EdgeInsets.all(14),
                 onPressed: _savingPassword ? null : _updatePassword,
                 child: _savingPassword
-                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white70))
                     : const Text('Update password'),
               ),
             ),
@@ -180,15 +172,10 @@ class _AccountScreenState extends State<AccountScreen> {
 
             SizedBox(
               width: double.infinity,
-              child: FilledButton.icon(
-                style: FilledButton.styleFrom(
-                  padding: EdgeInsets.all(10),
-                  minimumSize: Size.zero,
-                  backgroundColor: const Color(0xFFC44B3A),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                 ),
-                icon: const Icon(Icons.logout),
-                label: const Text('Log out'),
+              child: GradientButton(
+                borderRadius: BorderRadius.circular(20),
+                padding: const EdgeInsets.all(14),
+                danger: true,
                 onPressed: () async {
                   final confirm = await showDialog<bool>(
                     context: context,
@@ -205,6 +192,62 @@ class _AccountScreenState extends State<AccountScreen> {
                     context.read<AuthProvider>().logout();
                   }
                 },
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.logout, size: 18),
+                    SizedBox(width: 8),
+                    Text('Log out'),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  padding: const EdgeInsets.all(14),
+                  foregroundColor: const Color(0xFF331616),
+                  side: const BorderSide(color: Color(0xFF331616)),
+                ),
+                onPressed: () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('Delete account?'),
+                      content: const Text(
+                        'This will permanently delete your account and all your hives and gifts. This cannot be undone.',
+                      ),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                        FilledButton(
+                          style: FilledButton.styleFrom(backgroundColor: const Color(0xFFC44B3A), foregroundColor: Colors.white),
+                          onPressed: () => Navigator.pop(ctx, true),
+                          child: const Text('Delete'),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (confirm == true && context.mounted) {
+                    try {
+                      await context.read<AuthProvider>().deleteAccount();
+                    } catch (e) {
+                      if (context.mounted) _showError(e.toString().replaceFirst('Exception: ', ''));
+                    }
+                  }
+                },
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.delete_forever_outlined, size: 18),
+                    SizedBox(width: 8),
+                    Text('Delete account'),
+                  ],
+                ),
               ),
             ),
           ],
@@ -214,24 +257,3 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 }
 
-class _InfoTile extends StatelessWidget {
-  final String label;
-  final String value;
-  final Widget? trailing;
-
-  const _InfoTile({required this.label, required this.value, this.trailing});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.w600)),
-          Expanded(child: Text(value)),
-          ?trailing,
-        ],
-      ),
-    );
-  }
-}

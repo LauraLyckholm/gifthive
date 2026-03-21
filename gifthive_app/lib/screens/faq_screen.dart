@@ -22,8 +22,8 @@ const _faqs = [
     a: 'If it\'s your first time logging in, you will be prompted to create a new hive as soon as you are logged in. If you already have a hive, you can create a new one by tapping the \'+\' button on the dashboard or the hives screen.'
   ),
   (
-    q: 'Can I change the name of a hive later?',
-    a: 'This feature is coming soon!'
+    q: 'Can I change the name of a hive or gift later?',
+    a: 'Yes, you can change the name of a hive or gift at any time. Just tap the edit icon next to the name and make your changes.'
   ),
   (
     q: 'How do I delete a hive?',
@@ -58,17 +58,36 @@ class FaqScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('FAQ')),
-      body: ListView.separated(
-        padding: EdgeInsets.fromLTRB(0, 8, 0, 8 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
+      body: ListView.builder(
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
         itemCount: _faqs.length,
-        separatorBuilder: (context, index) => const Divider(height: 1),
         itemBuilder: (ctx, i) {
           final faq = _faqs[i];
-          return ExpansionTile(
-            title: Text(faq.q, style: const TextStyle(fontWeight: FontWeight.w600)),
-            childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            expandedCrossAxisAlignment: CrossAxisAlignment.start,
-            children: [Text(faq.a, style: const TextStyle(fontSize: 14))],
+          return Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ExpansionTile(
+              shape: const Border(),
+              collapsedShape: const Border(),
+              title: Text(faq.q, style: const TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF331616))),
+              iconColor: const Color(0xFF331616),
+              collapsedIconColor: const Color(0xFF331616),
+              childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              expandedCrossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(faq.a, style: TextStyle(fontSize: 14, color: const Color(0xFF331616).withValues(alpha: 0.8))),
+              ],
+            ),
           );
         },
       ),
