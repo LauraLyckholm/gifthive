@@ -345,6 +345,7 @@ class HiveDetailScreen extends StatelessWidget {
                           value: gift.bought,
                           onChanged: (_) => hiveProvider.toggleBought(token, hive.id, gift),
                           activeColor: const Color(0xFF331616),
+                          checkColor: Colors.white,
                         ),
                         Expanded(
                           child: Column(
