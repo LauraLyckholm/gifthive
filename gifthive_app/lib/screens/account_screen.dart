@@ -69,6 +69,25 @@ class _AccountScreenState extends State<AccountScreen> {
     }
   }
 
+  Widget _card(BuildContext context, {required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
   void _showSuccess(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: Colors.green),
@@ -93,82 +112,107 @@ class _AccountScreenState extends State<AccountScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            // Info section
-            Text('Personal information', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 12),
-            InfoTile(label: 'Username', value: user?.username ?? ''),
-            InfoTile(
-              label: 'Email',
-              value: user?.email ?? '',
-              trailing: const Tooltip(
-                message: 'Email can not be changed.',
-                child: Icon(Icons.lock_outline, size: 18),
+
+            // Personal information card
+            _card(
+              context,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Personal information', style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  InfoTile(label: 'Username', value: user?.username ?? ''),
+                  InfoTile(
+                    label: 'Email',
+                    value: user?.email ?? '',
+                    trailing: const Tooltip(
+                      message: 'Email can not be changed.',
+                      child: Icon(Icons.lock_outline, size: 18),
+                    ),
+                  ),
+                ],
               ),
             ),
 
-            const Divider(height: 40),
+            const SizedBox(height: 16),
 
-            // Change username
-            Text('Change username', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _usernameCtrl,
-              decoration: const InputDecoration(
-                labelText: 'New username',
-                hintText: '5–20 characters',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: GradientButton(
-                borderRadius: BorderRadius.circular(20),
-                padding: const EdgeInsets.all(14),
-                onPressed: _savingUsername ? null : _updateUsername,
-                child: _savingUsername
-                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white70))
-                    : const Text('Update username'),
-              ),
-            ),
-
-            const Divider(height: 40),
-
-            // Change password
-            Text('Change password', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _passwordCtrl,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'New password',
-                hintText: 'Min 7 chars, upper + lower + number',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _confirmPasswordCtrl,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Confirm new password',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: GradientButton(
-                borderRadius: BorderRadius.circular(20),
-                padding: const EdgeInsets.all(14),
-                onPressed: _savingPassword ? null : _updatePassword,
-                child: _savingPassword
-                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white70))
-                    : const Text('Update password'),
+            // Change username card
+            _card(
+              context,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Change username', style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _usernameCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'New username',
+                      hintText: '5–20 characters',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: GradientButton(
+                      borderRadius: BorderRadius.circular(20),
+                      padding: const EdgeInsets.all(14),
+                      onPressed: _savingUsername ? null : _updateUsername,
+                      child: _savingUsername
+                          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white70))
+                          : const Text('Update username'),
+                    ),
+                  ),
+                ],
               ),
             ),
 
-            const Divider(height: 40),
+            const SizedBox(height: 16),
+
+            // Change password card
+            _card(
+              context,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Change password', style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _passwordCtrl,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'New password',
+                      hintText: 'Min 7 chars, upper + lower + number',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _confirmPasswordCtrl,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Confirm new password',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: GradientButton(
+                      borderRadius: BorderRadius.circular(20),
+                      padding: const EdgeInsets.all(14),
+                      onPressed: _savingPassword ? null : _updatePassword,
+                      child: _savingPassword
+                          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white70))
+                          : const Text('Update password'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
 
             SizedBox(
               width: double.infinity,
