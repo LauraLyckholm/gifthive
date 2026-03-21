@@ -66,6 +66,16 @@ class ApiService {
     return Hive.fromJson(data is Map && data.containsKey('hive') ? data['hive'] : data);
   }
 
+  Future<Hive> updateHive(String token, String hiveId, String name) async {
+    final res = await http.put(
+      Uri.parse('$baseUrl/gift-routes/hives/$hiveId'),
+      headers: _authHeaders(token),
+      body: jsonEncode({'name': name}),
+    );
+    if (res.statusCode != 200) throw Exception('Failed to update hive');
+    return Hive.fromJson(jsonDecode(res.body));
+  }
+
   Future<void> deleteHive(String token, String hiveId) async {
     final res = await http.delete(
       Uri.parse('$baseUrl/gift-routes/hives/$hiveId'),

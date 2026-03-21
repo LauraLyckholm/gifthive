@@ -43,7 +43,10 @@ class _MainShellState extends State<MainShell> {
       key: _navigatorKeys[index],
       onGenerateRoute: (_) => MaterialPageRoute(
         builder: (_) => switch (index) {
-          0 => const HomeScreen(),
+          0 => HomeScreen(onSwitchTab: (i) {
+              _navigatorKeys[i].currentState?.popUntil((route) => route.isFirst);
+              setState(() => _currentIndex = i);
+            }),
           1 => const HivesScreen(),
           2 => const FaqScreen(),
           _ => const AccountScreen(),
@@ -90,14 +93,17 @@ class _MainShellState extends State<MainShell> {
                       final active = i == _currentIndex;
                       return GestureDetector(
                         behavior: HitTestBehavior.opaque,
-                        onTap: () => setState(() => _currentIndex = i),
+                        onTap: () {
+                          _navigatorKeys[i].currentState?.popUntil((route) => route.isFirst);
+                          setState(() => _currentIndex = i);
+                        },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
                             color: active
-                                ? scheme.primaryContainer.withValues(alpha: 0.7)
-                                : Colors.transparent,
+                                ? const Color(0xFFFFE4A0)
+                                : const Color(0x00FFE4A0),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Column(

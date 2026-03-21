@@ -86,6 +86,7 @@ class _AccountScreenState extends State<AccountScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('My account')),
       body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.fromLTRB(20, 20, 20, 20 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,6 +121,13 @@ class _AccountScreenState extends State<AccountScreen> {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
+                style: FilledButton.styleFrom(
+                  padding: EdgeInsets.all(10),
+                  minimumSize: Size.zero,
+                  backgroundColor: const Color(0xFFFFC440),
+                  foregroundColor: const Color(0xFF331616),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                 ),
                 onPressed: _savingUsername ? null : _updateUsername,
                 child: _savingUsername
                     ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
@@ -154,6 +162,13 @@ class _AccountScreenState extends State<AccountScreen> {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
+                style: FilledButton.styleFrom(
+                  padding: EdgeInsets.all(10),
+                  minimumSize: Size.zero,
+                  backgroundColor: const Color(0xFFFFC440),
+                  foregroundColor: const Color(0xFF331616),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                 ),
                 onPressed: _savingPassword ? null : _updatePassword,
                 child: _savingPassword
                     ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
@@ -166,7 +181,12 @@ class _AccountScreenState extends State<AccountScreen> {
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
-                style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                style: FilledButton.styleFrom(
+                  padding: EdgeInsets.all(10),
+                  minimumSize: Size.zero,
+                  backgroundColor: const Color(0xFFC44B3A),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                 ),
                 icon: const Icon(Icons.logout),
                 label: const Text('Log out'),
                 onPressed: () async {

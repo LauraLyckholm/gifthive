@@ -38,7 +38,17 @@ class _GiftHiveAppState extends State<GiftHiveApp> {
     return MaterialApp(
       title: 'GiftHive',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFF5A623)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFFFC440),
+        ).copyWith(
+          surface: const Color(0xFFF7F6F0),
+          onSurface: const Color(0xFF331616),
+        ),
+        scaffoldBackgroundColor: const Color(0xFFF7F6F0),
+        textTheme: const TextTheme().apply(
+          bodyColor: Color(0xFF331616),
+          displayColor: Color(0xFF331616),
+        ),
         useMaterial3: true,
       ),
       home: context.watch<AuthProvider>().isLoggedIn

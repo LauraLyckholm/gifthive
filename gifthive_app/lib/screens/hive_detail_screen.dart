@@ -262,12 +262,17 @@ class HiveDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(updatedHive.name)),
-      body: updatedHive.gifts.isEmpty
-          ? const Center(child: Text('No gifts yet. Add one!'))
-          : ListView.builder(
-              padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
-              itemCount: updatedHive.gifts.length,
-              itemBuilder: (ctx, i) {
+      body: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                updatedHive.gifts.isEmpty
+                ? const Center(child: Text('No gifts yet. Add one!'))
+                : ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                    itemCount: updatedHive.gifts.length,
+                    itemBuilder: (ctx, i) {
                 final gift = updatedHive.gifts[i];
                 return Dismissible(
                   key: ValueKey(gift.id),
@@ -349,9 +354,53 @@ class HiveDetailScreen extends StatelessWidget {
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddGiftDialog(context),
-        child: const Icon(Icons.add),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: 48,
+                  child: IgnorePointer(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0),
+                            Theme.of(context).scaffoldBackgroundColor,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 12, 20, 80 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SizedBox(
+                  width: 52,
+                  height: 52,
+                  child: FilledButton.tonal(
+                    style: FilledButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      backgroundColor: const Color(0xFFFFC440),
+                      foregroundColor: const Color(0xFF331616),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: () => _showAddGiftDialog(context),
+                    child: const Icon(Icons.add),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

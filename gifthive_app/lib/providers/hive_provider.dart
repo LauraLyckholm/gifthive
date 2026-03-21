@@ -48,6 +48,15 @@ class HiveProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> renameHive(String token, String hiveId, String name) async {
+    final updated = await _api.updateHive(token, hiveId, name);
+    final idx = _hives.indexWhere((h) => h.id == hiveId);
+    if (idx != -1) {
+      _hives[idx] = Hive(id: updated.id, name: updated.name, gifts: _hives[idx].gifts);
+      notifyListeners();
+    }
+  }
+
   Future<void> deleteHive(String token, String hiveId) async {
     await _api.deleteHive(token, hiveId);
     _hives.removeWhere((h) => h.id == hiveId);

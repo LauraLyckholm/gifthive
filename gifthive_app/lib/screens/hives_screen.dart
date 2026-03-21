@@ -22,13 +22,17 @@ class _HivesScreenState extends State<HivesScreen> {
     }
   }
 
-  void _showAddHiveDialog() {
-    final ctrl = TextEditingController();
+  void _showRenameHiveDialog(String hiveId, String currentName) {
+    final ctrl = TextEditingController(text: currentName);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('New Hive'),
-        content: TextField(controller: ctrl, decoration: const InputDecoration(hintText: 'Hive name')),
+        title: const Text('Rename Hive'),
+        content: TextField(
+          controller: ctrl,
+          decoration: const InputDecoration(hintText: 'Hive name'),
+          autofocus: true,
+        ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           FilledButton(
@@ -36,11 +40,46 @@ class _HivesScreenState extends State<HivesScreen> {
               if (ctrl.text.trim().isEmpty) return;
               Navigator.pop(ctx);
               final token = context.read<AuthProvider>().token;
+              await context.read<HiveProvider>().renameHive(token, hiveId, ctrl.text.trim());
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddHiveDialog() {
+    final ctrl = TextEditingController();
+    String? nameError;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+        title: const Text('New Hive'),
+        content: TextField(
+          controller: ctrl,
+          autofocus: true,
+          onChanged: (_) { if (nameError != null) setDialogState(() => nameError = null); },
+          decoration: InputDecoration(hintText: 'Hive name', errorText: nameError),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          FilledButton(
+            onPressed: () async {
+              if (ctrl.text.trim().isEmpty) {
+                setDialogState(() => nameError = 'Hive name is required');
+                return;
+              }
+              Navigator.pop(ctx);
+              final token = context.read<AuthProvider>().token;
               await context.read<HiveProvider>().addHive(token, ctrl.text.trim());
             },
             child: const Text('Create'),
           ),
         ],
+        ),
       ),
     );
   }
@@ -54,18 +93,23 @@ class _HivesScreenState extends State<HivesScreen> {
       appBar: AppBar(
         title: const Text('My Hives'),
       ),
-      body: hiveProvider.loading
-          ? const Center(child: CircularProgressIndicator())
-          : hiveProvider.error != null
-              ? Center(child: Text('Error: ${hiveProvider.error}'))
-              : hiveProvider.hives.isEmpty
-                  ? const Center(child: Text('No hives yet. Create one!'))
-                  : ListView.builder(
-                      padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
-                      itemCount: hiveProvider.hives.length,
-                      itemBuilder: (ctx, i) {
-                        final hive = hiveProvider.hives[i];
-                        return Dismissible(
+      body: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                hiveProvider.loading
+                ? const Center(child: CircularProgressIndicator())
+                : hiveProvider.error != null
+                    ? Center(child: Text('Error: ${hiveProvider.error}'))
+                    : hiveProvider.hives.isEmpty
+                        ? const Center(child: Text('No hives yet. Create one!'))
+                        : ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                            itemCount: hiveProvider.hives.length,
+                            itemBuilder: (ctx, i) {
+                              final hive = hiveProvider.hives[i];
+                              return Dismissible(
                           key: ValueKey(hive.id),
                           direction: DismissDirection.endToStart,
                           background: Container(
@@ -100,7 +144,14 @@ class _HivesScreenState extends State<HivesScreen> {
                               leading: const Icon(Icons.hive),
                               title: Text(hive.name),
                               subtitle: Text('${hive.gifts.length} gift(s)'),
-                              trailing: IconButton(
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit_outlined),
+                                    onPressed: () => _showRenameHiveDialog(hive.id, hive.name),
+                                  ),
+                                  IconButton(
                                 icon: const Icon(Icons.delete_outline),
                                 onPressed: () async {
                                   final confirm = await showDialog<bool>(
@@ -123,6 +174,8 @@ class _HivesScreenState extends State<HivesScreen> {
                                   }
                                 },
                               ),
+                                ],
+                              ),
                               onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (_) => HiveDetailScreen(hive: hive)),
@@ -130,11 +183,55 @@ class _HivesScreenState extends State<HivesScreen> {
                             ),
                           ),
                         );
-                      },
+                            },
+                          ),
+                              Positioned(
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                height: 48,
+                                child: IgnorePointer(
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0),
+                                          Theme.of(context).scaffoldBackgroundColor,
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 12, 20, 80 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SizedBox(
+                  width: 52,
+                  height: 52,
+                  child: FilledButton.tonal(
+                    style: FilledButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      backgroundColor: const Color(0xFFFFC440),
+                      foregroundColor: const Color(0xFF331616),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddHiveDialog,
-        child: const Icon(Icons.add),
+                    onPressed: _showAddHiveDialog,
+                    child: const Icon(Icons.add),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
