@@ -262,9 +262,22 @@ class HiveDetailScreen extends StatelessWidget {
     final hiveProvider = context.read<HiveProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: Text(updatedHive.name)),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 40, 20, 0),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Color(0xFF331616)),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                Expanded(
+                  child: Text(updatedHive.name, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: Stack(
               children: [

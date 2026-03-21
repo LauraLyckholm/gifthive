@@ -35,14 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.help_outline),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FaqScreen())),
-          ),
-        ],
-      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -50,6 +42,13 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: const Icon(Icons.help_outline, color: Color(0xFF331616)),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FaqScreen())),
+                ),
+              ),
               Text('GiftHive', style: Theme.of(context).textTheme.headlineLarge),
               const SizedBox(height: 32),
               TextField(

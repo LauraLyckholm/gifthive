@@ -86,13 +86,13 @@ class _AccountScreenState extends State<AccountScreen> {
     final user = context.watch<AuthProvider>().user;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('My account')),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(20, 20, 20, 20 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
+        padding: EdgeInsets.fromLTRB(20, 40, 20, 20 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 20),
             // Info section
             Text('Personal information', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),

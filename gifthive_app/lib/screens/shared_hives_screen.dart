@@ -11,11 +11,26 @@ class SharedHivesScreen extends StatelessWidget {
     final hiveProvider = context.watch<HiveProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Shared with me')),
-      body: hiveProvider.sharedHives.isEmpty
-          ? const Center(child: Text('No hives have been shared with you yet.'))
-          : ListView.builder(
-              padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 12, 20, 0),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Color(0xFF331616)),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                Text('Shared with me', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          Expanded(
+            child: hiveProvider.sharedHives.isEmpty
+              ? const Center(child: Text('No hives have been shared with you yet.'))
+              : ListView.builder(
+                  padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
               itemCount: hiveProvider.sharedHives.length,
               itemBuilder: (ctx, i) {
                 final hive = hiveProvider.sharedHives[i];
@@ -62,6 +77,9 @@ class SharedHivesScreen extends StatelessWidget {
                 );
               },
             ),
+          ),
+        ],
+      ),
     );
   }
 }

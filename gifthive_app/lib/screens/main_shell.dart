@@ -101,9 +101,13 @@ class _MainShellState extends State<MainShell> {
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: active
-                                ? const Color(0x91FFC440)
-                                : const Color(0x00FFC440),
+                            gradient: active
+                                ? const LinearGradient(
+                              begin: Alignment(-0.5, 0.87),
+                              end: Alignment(0.5, -0.87),
+                              colors: [Color(0xFFFFAF3A), Color(0xFFFFC440)],
+                            )
+                                : null,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Column(

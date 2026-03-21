@@ -259,123 +259,131 @@ class _HomeScreenState extends State<HomeScreen> {
     final hiveProvider = context.watch<HiveProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('GiftHive')),
-      body: hiveProvider.loading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: () => hiveProvider.loadHives(auth.token, userId: auth.user?.id),
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 20 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Welcome banner
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.06),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: hiveProvider.loading
+                ? const Center(child: CircularProgressIndicator())
+                : RefreshIndicator(
+                    onRefresh: () => hiveProvider.loadHives(auth.token, userId: auth.user?.id),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.fromLTRB(20, 60, 20, 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Welcome back,',
-                            style: TextStyle(color: Color(0xFF331616), fontSize: 16),
-                          ),
-                          Text(
-                            auth.user?.username ?? '',
-                            style: const TextStyle(
-                              color: Color(0xFF331616),
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
+                          // Welcome banner
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.06),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Welcome back,',
+                                  style: TextStyle(color: Color(0xFF331616), fontSize: 16),
+                                ),
+                                Text(
+                                  auth.user?.username ?? '',
+                                  style: const TextStyle(
+                                    color: Color(0xFF331616),
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 16),
+                          Text('Overview', style: Theme.of(context).textTheme.titleMedium),
+                          const SizedBox(height: 8),
+
+                          // Stat grid
+                          GridView.count(
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: EdgeInsets.zero,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 1.4,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  if (widget.onSwitchTab != null) {
+                                    widget.onSwitchTab!(1);
+                                  } else {
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => const HivesScreen()));
+                                  }
+                                },
+                                child: StatCard(
+                                  icon: Icons.hive,
+                                  label: hiveProvider.hives.length == 1 ? 'Hive' : 'Hives',
+                                  value: '${hiveProvider.hives.length}',
+                                  clickable: true,
+                                ),
+                              ),
+                              StatCard(
+                                icon: Icons.card_giftcard,
+                                label: hiveProvider.totalGifts == 1 ? 'Gift' : 'Gifts',
+                                value: '${hiveProvider.totalGifts}',
+                              ),
+                              StatCard(
+                                icon: Icons.alarm,
+                                label: hiveProvider.overdueGifts == 1 ? 'Gift overdue' : 'Gifts overdue',
+                                value: '${hiveProvider.overdueGifts}',
+                              ),
+                              GestureDetector(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const SharedHivesScreen()),
+                                ),
+                                child: StatCard(
+                                  icon: Icons.people_outline,
+                                  label: 'Shared with me',
+                                  value: '${hiveProvider.sharedHives.length}',
+                                  clickable: true,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-
-                    const SizedBox(height: 24),
-                    Text('Overview', style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: 12),
-
-                    // Stat grid
-                    GridView.count(
-                      crossAxisCount: 2,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 1.4,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            if (widget.onSwitchTab != null) {
-                              widget.onSwitchTab!(1);
-                            } else {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => const HivesScreen()));
-                            }
-                          },
-                          child: StatCard(
-                            icon: Icons.hive,
-                            label: hiveProvider.hives.length == 1 ? 'Hive' : 'Hives',
-                            value: '${hiveProvider.hives.length}',
-                            clickable: true,
-                          ),
-                        ),
-                        StatCard(
-                          icon: Icons.card_giftcard,
-                          label: hiveProvider.totalGifts == 1 ? 'Gift' : 'Gifts',
-                          value: '${hiveProvider.totalGifts}',
-                        ),
-                        StatCard(
-                          icon: Icons.alarm,
-                          label: hiveProvider.overdueGifts == 1 ? 'Gift overdue' : 'Gifts overdue',
-                          value: '${hiveProvider.overdueGifts}',
-                        ),
-                        GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const SharedHivesScreen()),
-                          ),
-                          child: StatCard(
-                            icon: Icons.people_outline,
-                            label: 'Shared with me',
-                            value: '${hiveProvider.sharedHives.length}',
-                            clickable: true,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        SizedBox(
-                            height: 52,
-                            width: 52,
-                            child: GradientButton(
-                              borderRadius: BorderRadius.circular(12),
-                              padding: EdgeInsets.zero,
-                              onPressed: () => _showActionSheet(context),
-                              child: const Icon(Icons.add),
-                            ),
-                          )
-                      ]
-                    ),
-                  ],
+                  ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 12, 20, 80 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SizedBox(
+                  width: 52,
+                  height: 52,
+                  child: GradientButton(
+                    borderRadius: BorderRadius.circular(12),
+                    padding: EdgeInsets.zero,
+                    onPressed: () => _showActionSheet(context),
+                    child: const Icon(Icons.add),
+                  ),
                 ),
-              ),
+              ],
             ),
+          ),
+        ],
+      ),
     );
   }
 }

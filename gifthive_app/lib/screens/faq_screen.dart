@@ -57,9 +57,8 @@ class FaqScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('FAQ')),
       body: ListView.builder(
-        padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
+        padding: EdgeInsets.fromLTRB(16, 60, 16, 16 + kBottomNavigationBarHeight + MediaQuery.viewPaddingOf(context).bottom),
         itemCount: _faqs.length,
         itemBuilder: (ctx, i) {
           final faq = _faqs[i];

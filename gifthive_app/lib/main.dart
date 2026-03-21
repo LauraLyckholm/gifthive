@@ -77,13 +77,6 @@ class _GiftHiveAppState extends State<GiftHiveApp> {
             foregroundColor: const Color(0xFF331616),
           ),
         ),
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.transparent,
-          foregroundColor: const Color(0xFF331616),
-          elevation: 2,
-          shadowColor: Colors.black.withValues(alpha: 0.1),
-        ),
         useMaterial3: true,
       ),
       home: context.watch<AuthProvider>().isLoggedIn

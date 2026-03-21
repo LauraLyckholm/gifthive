@@ -91,11 +91,11 @@ class _HivesScreenState extends State<HivesScreen> {
     final hiveProvider = context.watch<HiveProvider>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Hives'),
-      ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 40, 20, 4),
+          ),
           Expanded(
             child: Stack(
               children: [
