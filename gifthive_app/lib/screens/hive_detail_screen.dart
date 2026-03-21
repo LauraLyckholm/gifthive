@@ -265,7 +265,7 @@ class HiveDetailScreen extends StatelessWidget {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(4, 40, 20, 0),
+            padding: const EdgeInsets.fromLTRB(4, 45, 20, 0),
             child: Row(
               children: [
                 IconButton(
