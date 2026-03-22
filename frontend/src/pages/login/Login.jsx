@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import { useUserStore } from "../../stores/useUserStore";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/elements/Button/Button";
 import "./login.css";
 
 export const Login = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const successMessage = location.state?.message;
 
     // Destructures the function loginUser and some other states from the useUserStore hook
     const { loginUser, username, setUsername, password, setPassword, errorMessage, setErrorMessage } = useUserStore();
@@ -71,6 +73,7 @@ export const Login = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required />
                 </div>
+                {successMessage && <p className="disclaimer" style={{ color: "green" }}>{successMessage}</p>}
                 <p className="error-message disclaimer">{errorMessage}</p>
                 <Button className={"primary"} handleOnClick={handleLogin} btnText={"Login"} />
                 <div className="light-pair-text">

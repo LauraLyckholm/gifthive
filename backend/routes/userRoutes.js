@@ -9,7 +9,9 @@ import {
     getDashboardController,
     updateUserController,
     deleteUserController,
-    getUsersSharedHivesController
+    getUsersSharedHivesController,
+    forgotPasswordController,
+    resetPasswordController,
 } from "../controllers/userControllers";
 import listEndpoints from "express-list-endpoints";
 
@@ -33,6 +35,8 @@ userRouter.get("/dashboard", authenticateUser, getDashboardController);
 userRouter.get("/users/shared-hives/:id", authenticateUser, getUsersSharedHivesController);
 userRouter.post("/register", registerUserController);
 userRouter.post("/login", loginUserController);
+userRouter.post("/forgot-password", forgotPasswordController);
+userRouter.post("/reset-password", resetPasswordController);
 userRouter.put("/users/:id", authenticateUser, updateUserController);
 userRouter.delete("/users/:id", authenticateUser, deleteUserController);
 

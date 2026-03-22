@@ -4,6 +4,11 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import { Hive } from "../models/Hive";
 import { Gift } from "../models/Gift";
+import { PasswordResetToken } from "../models/PasswordResetToken";
+import crypto from "crypto";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // ------------ CONTROLLERS ------------ //
 // Register a user
@@ -304,6 +309,88 @@ export const deleteUserController = asyncHandler(async (req, res) => {
         console.error("Error deleting user:", error);
         res.status(500).json({ error: "Internal server error" });
     }
+});
+
+// Sends a password reset email to the user
+export const forgotPasswordController = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    // Always return 200 so we don't reveal whether an email exists
+    const user = await User.findOne({ email: email?.toLowerCase() });
+    if (!user) {
+        return res.status(200).json({ success: true, response: "If that email is registered, a reset link has been sent." });
+    }
+
+    // Delete any existing reset tokens for this user
+    await PasswordResetToken.deleteMany({ userId: user._id });
+
+    // Generate a secure random token
+    const token = crypto.randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await new PasswordResetToken({ userId: user._id, token, expiresAt }).save();
+
+    const resetLink = `https://gifthive.netlify.app/reset-password?token=${token}`;
+
+    const { data, error } = await resend.emails.send({
+        from: "Gifthive <onboarding@resend.dev>",
+        to: user.email,
+        subject: "Reset your Gifthive password",
+        html: `
+            <p>Hi ${user.username},</p>
+            <p>We received a request to reset your password. Click the link below to choose a new one:</p>
+            <p><a href="${resetLink}" style="color:#FFC440;font-weight:bold;">Reset my password</a></p>
+            <p>This link expires in 1 hour. If you didn't request a reset, you can ignore this email.</p>
+            <p>— The Gifthive team</p>
+        `,
+    });
+
+    if (error) {
+        console.error("Resend error:", error);
+        return res.status(500).json({ success: false, response: error.message });
+    }
+
+    console.log("Email sent:", data);
+    res.status(200).json({ success: true, response: "If that email is registered, a reset link has been sent." });
+});
+
+// Resets the user's password using the token from the email
+export const resetPasswordController = asyncHandler(async (req, res) => {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+        return res.status(400).json({ success: false, response: "Token and new password are required." });
+    }
+
+    // Validate password strength
+    if (password.length < 7 || !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/.test(password)) {
+        return res.status(400).json({
+            success: false,
+            response: "Password must be at least 7 characters and include uppercase, lowercase and a number."
+        });
+    }
+
+    const resetToken = await PasswordResetToken.findOne({ token });
+
+    if (!resetToken) {
+        return res.status(400).json({ success: false, response: "Invalid or expired reset link." });
+    }
+
+    if (resetToken.expiresAt < new Date()) {
+        await PasswordResetToken.deleteOne({ _id: resetToken._id });
+        return res.status(400).json({ success: false, response: "Reset link has expired. Please request a new one." });
+    }
+
+    const user = await User.findById(resetToken.userId);
+    if (!user) {
+        return res.status(404).json({ success: false, response: "User not found." });
+    }
+
+    user.password = bcrypt.hashSync(password, 10);
+    await user.save();
+    await PasswordResetToken.deleteOne({ _id: resetToken._id });
+
+    res.status(200).json({ success: true, response: "Password updated successfully. You can now log in." });
 });
 
 // Function to get the users shared hives

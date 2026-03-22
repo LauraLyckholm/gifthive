@@ -1,6 +1,8 @@
 import { Route } from "react-router-dom";
 import { Home } from "../pages/home/Home";
 import { Login } from "../pages/login/Login";
+import { ForgotPassword } from "../pages/forgotPassword/ForgotPassword";
+import { ResetPassword } from "../pages/resetPassword/ResetPassword";
 import { Register } from "../pages/register/Register";
 import { Dashboard } from "../pages/dashboard/Dashboard";
 import { Hives } from "../pages/hives/Hives";
@@ -19,6 +21,8 @@ const routes = (
     <>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/hives" element={<Hives />} />

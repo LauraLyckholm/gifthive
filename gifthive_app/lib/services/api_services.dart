@@ -40,6 +40,15 @@ class ApiService {
     return User.fromJson(body['response']);
   }
 
+  Future<void> forgotPassword(String email) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/user-routes/forgot-password'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email}),
+    );
+    if (res.statusCode != 200) throw Exception('Something went wrong. Please try again.');
+  }
+
   // ---------- HIVES ----------
 
   Future<List<Hive>> getHives(String token) async {

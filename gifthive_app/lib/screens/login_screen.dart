@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../services/api_services.dart';
 import '../widgets/gradient_button.dart';
 import 'register_screen.dart';
 import 'faq_screen.dart';
@@ -17,6 +18,64 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordCtrl = TextEditingController();
   bool _loading = false;
   String? _error;
+
+  void _showForgotPasswordDialog() {
+    final emailCtrl = TextEditingController();
+    bool sending = false;
+    bool sent = false;
+    String? dialogError;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('Forgot password?'),
+          content: sent
+              ? const Text('If that email is registered, a reset link has been sent. Check your inbox.')
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Enter your email and we\'ll send you a reset link.'),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: emailCtrl,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
+                      autofocus: true,
+                    ),
+                    if (dialogError != null) ...[
+                      const SizedBox(height: 8),
+                      Text(dialogError!, style: TextStyle(color: Theme.of(ctx).colorScheme.error, fontSize: 13)),
+                    ],
+                  ],
+                ),
+          actions: sent
+              ? [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close'))]
+              : [
+                  TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+                  FilledButton(
+                    onPressed: sending ? null : () async {
+                      if (emailCtrl.text.trim().isEmpty) return;
+                      setDialogState(() { sending = true; dialogError = null; });
+                      try {
+                        await ApiService().forgotPassword(emailCtrl.text.trim());
+                        setDialogState(() { sending = false; sent = true; });
+                      } catch (e) {
+                        setDialogState(() {
+                          sending = false;
+                          dialogError = e.toString().replaceFirst('Exception: ', '');
+                        });
+                      }
+                    },
+                    child: sending
+                        ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Text('Send link'),
+                  ),
+                ],
+        ),
+      ),
+    );
+  }
 
   Future<void> _login() async {
     setState(() { _loading = true; _error = null; });
