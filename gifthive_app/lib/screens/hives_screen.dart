@@ -131,7 +131,10 @@ class _HivesScreenState extends State<HivesScreen> {
                                 actions: [
                                   TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
                                   FilledButton(
-                                    style: FilledButton.styleFrom(backgroundColor: const Color(0xFFC44B3A), foregroundColor: Colors.white),
+                                    style: ButtonStyle(
+                                      backgroundColor: WidgetStateProperty.all(const Color(0xFFC44B3A)),
+                                      foregroundColor: WidgetStateProperty.all(Colors.white),
+                                    ),
                                     onPressed: () => Navigator.pop(ctx, true),
                                     child: const Text('Delete'),
                                   ),
@@ -177,10 +180,12 @@ class _HivesScreenState extends State<HivesScreen> {
                                     ),
                                   ),
                                   IconButton(
+                                    padding: const EdgeInsets.only(left: 20, right: 0),
                                     icon: const Icon(Icons.edit_outlined, color: Color(0xFF331616)),
                                     onPressed: () => _showRenameHiveDialog(hive.id, hive.name),
                                   ),
                                   IconButton(
+                                    padding: const EdgeInsets.only(left: 4, right: 0),
                                     icon: const Icon(Icons.delete_outline, color: Color(0xFF331616)),
                                     onPressed: () async {
                                       final confirm = await showDialog<bool>(
@@ -191,7 +196,10 @@ class _HivesScreenState extends State<HivesScreen> {
                                           actions: [
                                             TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
                                             FilledButton(
-                                              style: FilledButton.styleFrom(backgroundColor: const Color(0xFFC44B3A)),
+                                              style: ButtonStyle(
+                                                backgroundColor: WidgetStateProperty.all(const Color(0xFFC44B3A)),
+                                                foregroundColor: WidgetStateProperty.all(Colors.white),
+                                              ),
                                               onPressed: () => Navigator.pop(ctx, true),
                                               child: const Text('Delete'),
                                             ),

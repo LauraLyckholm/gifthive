@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/hive.dart';
 import '../providers/auth_provider.dart';
 import '../providers/hive_provider.dart';
+import 'hive_detail_screen.dart';
 import 'hives_screen.dart';
 import 'shared_hives_screen.dart';
 import '../widgets/gradient_button.dart';
@@ -10,7 +11,8 @@ import '../widgets/stat_card.dart';
 
 class HomeScreen extends StatefulWidget {
   final void Function(int index)? onSwitchTab;
-  const HomeScreen({super.key, this.onSwitchTab});
+  final void Function(Hive hive)? onOpenHiveDetail;
+  const HomeScreen({super.key, this.onSwitchTab, this.onOpenHiveDetail});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -238,6 +240,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   setDialogState(() => nameError = 'Gift name is required');
                   return;
                 }
+                final pendingTag = tagsCtrl.text.trim();
+                if (pendingTag.isNotEmpty && !tags.contains(pendingTag)) tags.add(pendingTag);
                 Navigator.pop(ctx);
                 final token = context.read<AuthProvider>().token;
                 await context.read<HiveProvider>().addGift(
@@ -340,10 +344,42 @@ class _HomeScreenState extends State<HomeScreen> {
                                 label: hiveProvider.totalGifts == 1 ? 'Gift' : 'Gifts',
                                 value: '${hiveProvider.totalGifts}',
                               ),
-                              StatCard(
-                                icon: Icons.alarm,
-                                label: hiveProvider.overdueGifts == 1 ? 'Gift overdue' : 'Gifts overdue',
-                                value: '${hiveProvider.overdueGifts}',
+                              GestureDetector(
+                                onTap: hiveProvider.overdueGifts == 0 ? null : () {
+                                  final overdue = hiveProvider.hivesWithOverdueGifts;
+                                  if (overdue.length == 1) {
+                                    widget.onOpenHiveDetail?.call(overdue.first);
+                                  } else {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (ctx) => SafeArea(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                                              child: Text('Overdue gifts in', style: Theme.of(context).textTheme.titleMedium),
+                                            ),
+                                            ...overdue.map((h) => ListTile(
+                                              leading: const Icon(Icons.hive_outlined),
+                                              title: Text(h.name),
+                                              onTap: () {
+                                                Navigator.pop(ctx);
+                                                widget.onOpenHiveDetail?.call(h);
+                                              },
+                                            )),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: StatCard(
+                                  icon: Icons.alarm,
+                                  label: hiveProvider.overdueGifts == 1 ? 'Gift overdue' : 'Gifts overdue',
+                                  value: '${hiveProvider.overdueGifts}',
+                                ),
                               ),
                               GestureDetector(
                                 onTap: () => Navigator.push(

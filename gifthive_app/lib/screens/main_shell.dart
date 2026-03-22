@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../models/hive.dart';
+import 'hive_detail_screen.dart';
 import 'home_screen.dart';
 import 'hives_screen.dart';
 import 'faq_screen.dart';
@@ -43,10 +45,21 @@ class _MainShellState extends State<MainShell> {
       key: _navigatorKeys[index],
       onGenerateRoute: (_) => MaterialPageRoute(
         builder: (_) => switch (index) {
-          0 => HomeScreen(onSwitchTab: (i) {
-              _navigatorKeys[i].currentState?.popUntil((route) => route.isFirst);
-              setState(() => _currentIndex = i);
-            }),
+          0 => HomeScreen(
+              onSwitchTab: (i) {
+                _navigatorKeys[i].currentState?.popUntil((route) => route.isFirst);
+                setState(() => _currentIndex = i);
+              },
+              onOpenHiveDetail: (hive) {
+                setState(() => _currentIndex = 1);
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _navigatorKeys[1].currentState?.popUntil((route) => route.isFirst);
+                  _navigatorKeys[1].currentState?.push(
+                    MaterialPageRoute(builder: (_) => HiveDetailScreen(hive: hive)),
+                  );
+                });
+              },
+            ),
           1 => const HivesScreen(),
           2 => const FaqScreen(),
           _ => const AccountScreen(),

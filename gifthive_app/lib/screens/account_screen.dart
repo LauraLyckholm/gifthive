@@ -269,7 +269,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       actions: [
                         TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
                         FilledButton(
-                          style: FilledButton.styleFrom(backgroundColor: const Color(0xFFC44B3A), foregroundColor: Colors.white),
+                          style: ButtonStyle(backgroundColor: WidgetStateProperty.all(const Color(0xFFC44B3A)), foregroundColor: WidgetStateProperty.all(Colors.white)),
                           onPressed: () => Navigator.pop(ctx, true),
                           child: const Text('Delete'),
                         ),

@@ -110,6 +110,8 @@ class HiveDetailScreen extends StatelessWidget {
                   setDialogState(() => nameError = 'Gift name is required');
                   return;
                 }
+                final pendingTag = tagsCtrl.text.trim();
+                if (pendingTag.isNotEmpty && !tags.contains(pendingTag)) tags.add(pendingTag);
                 Navigator.pop(ctx);
                 final token = context.read<AuthProvider>().token;
                 await context.read<HiveProvider>().addGift(
@@ -126,6 +128,7 @@ class HiveDetailScreen extends StatelessWidget {
   }
 
   void _showEditGiftDialog(BuildContext context, Gift gift) {
+    final nameCtrl = TextEditingController(text: gift.gift);
     final List<String> tags = List.from(gift.tags);
     final tagsCtrl = TextEditingController();
     final existingDue = gift.dueDate != null ? DateTime.tryParse(gift.dueDate!) : null;
@@ -140,6 +143,12 @@ class HiveDetailScreen extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              TextField(
+                controller: nameCtrl,
+                decoration: const InputDecoration(labelText: 'Gift name'),
+                autofocus: true,
+              ),
+              const SizedBox(height: 12),
               TextField(
                 controller: tagsCtrl,
                 decoration: const InputDecoration(
@@ -218,6 +227,7 @@ class HiveDetailScreen extends StatelessWidget {
                   context.read<AuthProvider>().token,
                   hive.id,
                   gift,
+                  name: nameCtrl.text.trim(),
                   tags: tags,
                   dueDate: selectedDate,
                   clearDueDate: clearDueDate,
@@ -309,7 +319,7 @@ class HiveDetailScreen extends StatelessWidget {
                         actions: [
                           TextButton(onPressed: () => Navigator.pop(dlg, false), child: const Text('Cancel')),
                           FilledButton(
-                            style: FilledButton.styleFrom(backgroundColor: const Color(0xFFC44B3A)),
+                            style: ButtonStyle(backgroundColor: WidgetStateProperty.all(const Color(0xFFC44B3A)), foregroundColor: WidgetStateProperty.all(Colors.white)),
                             onPressed: () => Navigator.pop(dlg, true),
                             child: const Text('Delete'),
                           ),
@@ -372,10 +382,12 @@ class HiveDetailScreen extends StatelessWidget {
                           ),
                         ),
                         IconButton(
+                          padding: const EdgeInsets.only(left: 8, right: 4),
                           icon: const Icon(Icons.edit_outlined, color: Color(0xFF331616)),
                           onPressed: () => _showEditGiftDialog(ctx, gift),
                         ),
                         IconButton(
+                          padding: const EdgeInsets.only(left: 4, right: 8),
                           icon: const Icon(Icons.delete_outline, color: Color(0xFF331616)),
                           onPressed: () async {
                             final confirm = await showDialog<bool>(
@@ -386,7 +398,7 @@ class HiveDetailScreen extends StatelessWidget {
                                 actions: [
                                   TextButton(onPressed: () => Navigator.pop(dlg, false), child: const Text('Cancel')),
                                   FilledButton(
-                                    style: FilledButton.styleFrom(backgroundColor: const Color(0xFFC44B3A)),
+                                    style: ButtonStyle(backgroundColor: WidgetStateProperty.all(const Color(0xFFC44B3A)), foregroundColor: WidgetStateProperty.all(Colors.white)),
                                     onPressed: () => Navigator.pop(dlg, true),
                                     child: const Text('Delete'),
                                   ),

@@ -25,6 +25,12 @@ class HiveProvider extends ChangeNotifier {
         }).length;
       });
 
+  List<Hive> get hivesWithOverdueGifts => _hives.where((h) => h.gifts.any((g) {
+        if (g.dueDate == null) return false;
+        final due = DateTime.tryParse(g.dueDate!);
+        return due != null && due.isBefore(DateTime.now()) && !g.bought;
+      })).toList();
+
   Future<void> loadHives(String token, {String? userId}) async {
     _loading = true;
     _error = null;
@@ -86,8 +92,9 @@ class HiveProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> editGift(String token, String hiveId, Gift gift, {required List<String> tags, DateTime? dueDate, bool clearDueDate = false}) async {
+  Future<void> editGift(String token, String hiveId, Gift gift, {required List<String> tags, String? name, DateTime? dueDate, bool clearDueDate = false}) async {
     final fields = <String, dynamic>{'tags': tags};
+    if (name != null && name.isNotEmpty) fields['gift'] = name;
     if (clearDueDate) {
       fields['dueDate'] = null;
     } else if (dueDate != null) {
