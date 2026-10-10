@@ -1,0 +1,24 @@
+{
+  "name": "Gifthive",
+  "short_name": "Gifthive",
+  "description": "Save and manage all your gift ideas in one place",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F7F6F0",
+  "theme_color": "#FFC440",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
