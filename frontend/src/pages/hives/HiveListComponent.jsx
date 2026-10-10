@@ -20,7 +20,7 @@ export const HiveListComponent = () => {
     const navigate = useNavigate();
 
     // Saves the hives from the local storage in a variable
-    const savedHives = JSON.parse(localStorage.getItem("hives"));
+    const savedHives = JSON.parse(localStorage.getItem("hives")) || [];
 
     // Fetches the hives when the component mounts
     useEffect(() => {

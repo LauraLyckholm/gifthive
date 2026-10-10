@@ -78,7 +78,7 @@ export const UpdateGiftInfo = () => {
             await updateGift(giftData);
             setGiftName("");
             setTags("");
-            setDueDate("");
+            setDueDate(null);
 
             // Alerts to the user that the gift has been created and gives them the choice to either add another gift or go back to their hive
             customSwal.fire({
@@ -90,7 +90,7 @@ export const UpdateGiftInfo = () => {
                 if (result.isConfirmed) {
                     setGiftName("");
                     setTags("");
-                    setDueDate("");
+                    setDueDate(null);
                     navigate(`/hives/${hiveId}`);
                 }
             });
@@ -128,7 +128,7 @@ export const UpdateGiftInfo = () => {
                     <DatePicker
                         className="customDatePickerInput"
                         id="dueDate"
-                        value={dueDate}
+                        value={dueDate ? dayjs(dueDate) : null}
                         onChange={setDueDate}
                         slots={{
                             openPickerIcon: EditCalendarRoundedIcon,

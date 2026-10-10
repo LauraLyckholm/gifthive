@@ -17,7 +17,7 @@ export const CreateNewHive = () => {
     useEffect(() => {
         setGiftName("");
         setTagNames("");
-        setDueDate("");
+        setDueDate(null);
     }, [])
 
     // Function to handle adding a new hive
@@ -58,7 +58,7 @@ export const CreateNewHive = () => {
                 setHiveName("");
                 setGiftName("");
                 setTagNames("");
-                setDueDate("");
+                setDueDate(null);
 
                 // Alert user and navigate
                 await customSwal.fire({
@@ -115,7 +115,7 @@ export const CreateNewHive = () => {
                     <DatePicker
                         className="customDatePickerInput"
                         id="dueDate"
-                        value={dueDate}
+                        value={dueDate ? dayjs(dueDate) : null}
                         onChange={setDueDate}
                         slots={{
                             openPickerIcon: EditCalendarRoundedIcon,
