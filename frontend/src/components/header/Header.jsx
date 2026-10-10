@@ -61,6 +61,8 @@ export const Header = () => {
                 {/* Configures the React Burger Menu */}
                 <Menu
                     right
+                    pageWrapId=""
+                    outerContainerId=""
                     isOpen={menuOpen}
                     onStateChange={(state) => setMenuOpen(state.isOpen)}
                     closeMenuOnBlur={true}
