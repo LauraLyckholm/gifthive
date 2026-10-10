@@ -1,7 +1,10 @@
 [build]
-command= "npm run build"
+  command = "npm run build"
   base = "frontend"
   publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
 
 [[redirects]]
 from = "/*"
